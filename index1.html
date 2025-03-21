@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script>
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.addEventListener("load", function() {
+        window.scrollTo(0, 0);
+      });
+    </script>
+
+
+
+    <title>Ghana Road Accident Data Visualization</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;700&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;700&display=swap"rel="stylesheet"
+    />
+
+
+    <style>
+
+      html, body {  
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: dimgrey; 
+        overflow-y: auto;
+        font-family: 'Poppins', sans-serif; /* Default text font */
+        overflow: hidden; /* Prevent body scrolling */
+      }
+
+      /* Body as a column flex container */
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* Full viewport height */
+      }
+      
+      /* ----------------- Splash / Intro Section ----------------- */
+      /* This section introduces the user to your visualization */
+      #intro {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 999; /* on top of the map */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: url('https://via.placeholder.com/1200x900.png?text=Mountains+Image') center/cover no-repeat;
+        text-align: center;
+        padding: 20px;
+        transition: opacity 1.5s ease-out;  /* Slows down the fade-out */
+      }
+
+      /* Overlay pseudo-element with a maroon tone and reduced transparency */
+      #intro::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255,255,255, 0.9);
+        pointer-events: none;
+      }
+
+      /* Centered content within the splash overlay */
+      .intro-content {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        z-index: 10;
+      }
+      .intro-content h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.9rem;
+        color: rgba(130, 23, 23, 1.0);
+        margin-bottom: 0.6rem;
+        margin-top: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+      }
+      .intro-content p {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+      .start-journey-btn {
+        display: inline-block;
+        background: rgba(103, 15, 15, 1.0);
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+      .start-journey-btn:hover {
+        background: rgba(52, 152, 219, 0.9);
+      }
+
+       .intro-content .byline {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        margin-top: 5px;
+        text-align: center;
+        padding: 1px 0;
+      }
+
+      /* ----------------- Header and Main Layout ----------------- */
+
+      #header {
+        background-color: rgba(130, 20, 15, 1.0);
+        color: white;
+        text-align: center;
+        padding: 20px;
+        flex: 0 0 auto; /* Prevents header from growing or shrinking */
+        
+      }
+      #header h1 {
+        font-family: 'Playfair Display', serif;
+        margin: 0;
+        padding: 5px 20px;
+        font-size: 38px;   /* Default: 38px ≈ 2.375rem */
+        font-weight: bold;
+        line-height: 1.3; 
+      }
+
+      h3 {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 12px 7px ;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.2; 
+      }
+
+      p {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.5; 
+      }
+
+      #mainMapContainer {
+        background-color: dimgrey;
+        height: 100vh;  
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* MAIN CONTAINER - holds three floated columns */
+     #mainContainer {
+        display: flex;       /* columns side-by-side on wide screens */
+        flex: 1 1 auto; /* Allows mainContainer to grow and fill space */
+        width: 100%; 
+        overflow: hidden; /* Prevent body scrolling */ 
+      }
+
+      /* LEFT COLUMN (#main2) */
+      #main2 {
+        width: 18%;
+        flex: 1 1 auto;  /* Ensure it fills available vertical space */
+        background-color: dimgrey;
+        color: white;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* Scroll if content overflows */
+      }
+    
+    /* CENTER COLUMN (#main1) */
+      #main1 {
+        width: 54%;
+        box-sizing: border-box;
+        margin-top: 10px; /* If you still want that gap. You can remove it */ 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* Prevent map from causing overflow */
+      }
+
+    /* RIGHT COLUMN (#main3) */
+      #main3 {
+        width: 28%;
+        background-color: dimgrey;
+        color: white;
+        padding-left: 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow-y: hidden; /* Enable scrolling if content overflows */
+      } 
+      
+      /* Map Containers */
+      #viewDiv {
+        position: relative; /* Establishes a positioning context for absolute children */
+        flex: 1; /* equivalent to flex: 1 1 auto */
+        width: 100%;
+        background-color: grey; /* Just a placeholder color */
+      }
+
+       #viewDiv2 {
+        width: 100%;
+        flex: 1 1 auto; /* Fills available space */
+        background-color: grey;
+        margin-top: 2px; /* some spacing above the second map */
+      }
+
+      /* Clear floats if needed below the 3 columns */
+      .clearfix {
+        clear: both;
+      }
+
+      /* Additional styles */
+      #legendListDiv {
+        flex: 1 1 auto; 
+    /*  height: 50%; */
+        width: 100%;
+        background-color: white;
+        color: black;
+        margin-bottom: 6px;
+        overflow-y: auto; /* Scroll if content overflows */
+      }
+
+      #legendListDiv2 {
+        flex: 0 0 auto;
+        height: 250px;   /* Adjust this value as needed */
+        width: 100%;
+        background-color: white;
+        color: black;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        overflow-y: auto; /* Scroll if content overflows */
+      }
+     
+
+      /* Opacity slider styling */
+      #opacityTitle {
+        text-align: center;
+        font-size: 12px;
+        color: white;
+        padding: 0px;
+        margin: 2px 0;
+        border-radius: 4px;
+      }
+
+    /* Position the opacity slider at the bottom of viewDiv */
+    #opacitySlider {
+      position: absolute;
+      bottom: 16px;  /* Adjust this value to control spacing from the bottom */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;   /* Constrained width relative to viewDiv (and thus #main1) */
+      box-sizing: border-box; /* Ensures padding is included in the width */
+      background: rgba(128, 128, 128, 0.8);   /* Semi-transparent background for readability */
+      padding: 4px;
+      padding-bottom: 8px;
+      border-radius: 0px;
+    }
+
+    /* Slider styling */
+    .opacity-slider {
+      display: block;
+      width: 97%;
+      height: 5px;
+      margin-bottom: 10px;
+      margin-left: 12px;
+      margin-right: 10px;
+      -webkit-appearance: none;
+      background-color: maroon;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+    }
+
+    /* Webkit slider thumb */
+    .opacity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 2px solid #666;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Mozilla slider thumb */
+    .opacity-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 2px solid #666;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Optional: update the opacity value display on hover or focus */
+    .opacity-slider:hover {
+      background-color: darkgrey;
+    }
+
+     
+      /* Year dropdown */
+      #yearSelect {
+        color: white;
+        text-align: center;
+        font-size: 12px;
+        margin: 5px 0;
+        
+      }
+
+      .dropdown select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 7px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        font-size: 17px;
+        border-radius: 4px;
+        background-color: darkgrey;
+      }
+
+    .layer-buttons-container {
+      /* any custom styling for the layer button group */
+      margin: 5px 0px;
+      }
+
+      .control-buttons button {
+        width: 100%;
+        margin-bottom: 5px;
+        padding: 10px;
+        background-color: darkgrey;
+        color: white;
+        border: 1px solid #ccc;
+      /*  border: none; */
+        cursor: pointer;
+        font-size: 17px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .control-buttons button:hover {
+        background-color: saddlebrown;
+      }
+
+      .control-buttons button.active-button {
+        background-color: maroon; /* Example active color */
+        color: white;
+      }
+
+      .control-buttons button.active-button:hover {
+        background-color: saddlebrown; /* Example hover for active button */
+      
+      }
+      #titlecontrolButtonsDiv {
+        color: white;
+        text-align: center;
+        font-size: 12px;
+        margin: 3px 0 3px 0;
+        border-radius: 4px;
+      }
+
+      .reset-button-container { 
+         margin-top: 5px; /* any custom styling for the reset button group */
+      } 
+
+      #titleResetButtonDiv {
+        color: white;
+        text-align: center;
+        font-size: 12px;
+        margin: 3px 0;
+        border-radius: 4px;
+      }
+
+      #resetBtn {
+        width: 100%;
+        margin-bottom: 0px;
+        padding: 8px;
+        background-color: darkgrey;
+        color: white;
+     /*   border: none; */
+        border: 1px solid #ccc;
+        cursor: pointer;
+        font-size: 17px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      #resetBtn:hover {
+        background-color: saddlebrown;
+      }
+
+      .notes-container p{
+        padding-bottom: 5px;
+    /*    background-color: #f5f5f5; */ /* light background for contrast */
+        color: #fff;
+        font-size: 14px;
+        margin-bottom: 0px;
+     /*     border-top: 1px solid #ccc;  */
+     /*   flex: 1 1 auto;  */ /* Fills available space */
+        overflow-y: auto; /* Scroll if content overflows */
+      }
+
+
+      @media screen and (min-width: 2560px) {
+      /* Increase base font size for better readability */
+        body {
+        font-size: 1.2rem;
+      }
+  
+      .intro-content p {
+        font-size: 1.3rem;       /* Increase text size for better legibility */
+        line-height: 1.6;
+        margin-bottom: 1.75rem;
+      }
+      .intro-content h1 {
+        font-size: 3rem;       /* A larger heading on high-resolution displays */
+        margin-top: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Adjust header font size */
+      #header h1 {
+        font-size: 3rem;
+      }
+      .notes-container p{
+        font-size: 1.1rem;  /* ~18px for high-res screens */  /* 16px = 1rem on high-resolution screens */
+        line-height: 1.6;     /* Provides comfortable spacing */
+        margin-bottom: 1rem; /* Adjust spacing between paragraphs */
+      }      
+        
+       
+      #main1 {
+      /* Allow the center column to grow more */
+        height: auto; 
+      }
+
+      #viewDiv, #viewDiv2 {
+      /* Increase the height of the map containers */
+        height: 90vh; /* or even a fixed pixel value if needed */
+      }
+
+      #main2 {
+        height: auto; 
+        flex: 1 1 auto;
+      }
+
+      #main3 {
+        display: flex;
+        flex-direction: column;
+      }
+      #legendListDiv2 {
+        flex: 0 0 auto;
+      }
+      #viewDiv2 {
+        flex: 1 1 auto;
+      }
+  
+      /* Increase padding and margins for containers */
+      #mainContainer {
+    /*    padding: 10px; */
+      }
+  
+      /* Adjust the legend container to avoid extra space */
+      #legendListDiv {
+        flex: 0 0 auto;
+        max-height: 800px; /* Adjust as needed */
+        margin-bottom: 20px;
+      }
+  
+      /* Enlarge buttons for high-res displays */
+      .control-buttons button {
+        padding: 15px;
+        font-size: 1.2rem;
+      }
+  
+      /* Optional: Adjust slider styling */
+      .opacity-slider {
+        height: 7px;
+      }
+
+      .opacity-slider::-webkit-slider-thumb,
+      .opacity-slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+      }
+      /* You might also want to adjust margins or padding if needed */
+      .reset-button-container {
+        margin-top: 5px; /* Ensure this value is appropriate for large screens */
+      }
+    }
+
+       /* For desktop, enable scroll snap for a neat one-screen scroll */
+      @media screen and (min-width: 801px) {
+        html, body {
+          scroll-snap-type: y mandatory;
+        }
+        /* Both sections snap to the start */
+        #intro, #mainMapContainer {
+          scroll-snap-align: start;
+        }
+      }
+
+      /* Responsive adjustments */
+      @media screen and (max-width: 800px) {
+      /* Make the header text smaller on smaller screens */
+        
+      #mainContainer {
+        flex-direction: column; /* stack columns on small screens */
+        overflow: visible; /* Allow internal scrolling if needed */
+        }
+
+      /* Reorder for mobile: Map first, then controls, then additional info */
+        #main1 { order: 1; }
+        #main2 { order: 2; }
+        #main3 { order: 3; }
+
+       /* Other mobile adjustments */
+        #header h1 {
+          font-size: 32px;   /* ~1.875rem on small-to-medium screens */
+        }
+        .notes-container p{
+          font-size: 0.95rem; /* ~14px for improved legibility */
+          line-height: 1.4;    /* More breathing room between lines */
+          margin-bottom: 0.9rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
+        }
+         #intro {
+          padding-left: 5px;
+          padding:  0px;
+        }
+
+        .intro-content p {
+          font-size: 1rem;
+          line-height: 1.4;
+          margin-bottom: 1.4rem;
+        }
+        .intro-content h1 {
+          font-size: 2.4rem;
+          margin-top: 0.35rem;
+          margin-bottom: 0.55rem;
+        }
+
+      /* Allow body to scroll */
+      html, body {
+        overflow-y: auto; /* Enable vertical scrolling on mobile */
+      }
+
+      /* Float none, 100% width each */
+        #main1, #main2, #main3 {
+          width: 100%;
+          height: auto; /* Let it expand */
+          margin: 0; /* Remove margin for flush stacking */
+          position: relative;
+        }
+        /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
+        #viewDiv {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 550px;
+
+        }
+
+        #viewDiv2 {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 550px; /* or whatever you like on mobile */
+        }
+
+        #legendListDiv {
+          height: auto !important;   /* Remove the fixed height */
+          overflow-y: visible !important; /* Ensure no scrolling */
+      }
+    }
+
+    @media screen and (min-width: 360px) and (max-width: 600px) {
+  /* Your mobile styles here */
+  #intro {
+    padding-left: 5px;
+    padding: 0px;
+  }
+  #intro .intro-content h1 {
+    font-size: 1.9rem;
+    line-height: 1.12;
+  }
+  #intro .intro-content p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1.25rem;
+  }
+  #header h1 {
+    font-size: 27px; /* or your desired size */
+    margin-top: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .notes-container p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  /* Reorder for mobile */
+  #main1 { order: 1; }
+  #main2 { order: 2; }
+  #main3 { order: 3; }
+
+  /* Legends */
+  #legendListDiv,
+  #legendListDiv2 {
+    font-size: 1.1rem;
+    padding: 8px;
+    max-height: 350px;
+  }
+}
+
+   
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.31/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/CSVLayer",
+        "esri/widgets/Legend",
+        "esri/layers/FeatureLayer",
+      ], function (Map, MapView, CSVLayer, Legend, FeatureLayer) {
+        // Main Map
+        var mymap = new Map({
+          basemap: "dark-gray",
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: mymap,
+          zoom:6.5 ,
+          center: [-1.023194, 7.946527], // Centered over Ghana
+        });
+
+
+        var map2 = new Map({
+          basemap: "dark-gray",
+        });
+
+        var view2 = new MapView({
+          container: "viewDiv2",
+          map: map2,
+          zoom:6.5 ,
+          center: [-1.023194, 7.946527], // Centered over Ghana
+        });
+
+
+        // After you create view and view2
+        window.addEventListener("resize", function () {
+          if (view) {
+            view.resize();
+          }
+          if (view2) {
+            view2.resize();
+          }
+        });
+
+  
+        var population_data = new FeatureLayer ({
+          portalItem:{
+          id:"72f70280e5d2436aabab70d05b2070ab"
+          }
+        });
+        
+        map2.add(population_data);
+
+        
+        var regions = new FeatureLayer ({
+          portalItem:{
+          id:"6c46b0d211514d469f2ec62b8c609c29"
+          },
+
+        // Override any default scale range
+        minScale: 0,
+        maxScale: 0
+        });
+        
+        mymap.add(regions);
+
+        
+        var roads_2 = new FeatureLayer ({
+          portalItem:{
+          id:"ed0c564bc3e24cc7ab018d711e549298"
+          }
+        });
+        
+        mymap.add(roads_2);
+
+        roads_2.when(function() {
+          var slider = document.querySelector(".opacity-slider");
+          var opacity = document.querySelector(".opacity");
+          slider.addEventListener("input", function(){
+            roads_2.opacity = slider.value;
+            opacity.innerText = slider.value;
+        });
+      });
+
+
+        const views = [view, view2];
+        let active;
+
+        const sync = (source) => {
+          if (!active || !active.viewpoint || active !== source) {
+            return;
+          }
+
+          for (const view of views) {
+            if (view !== active) {
+              view.viewpoint = active.viewpoint;
+            }
+          }
+        };
+
+        for (const view of views) {
+          view.watch(["interacting", "animation"], () => {
+            active = view;
+            sync(active);
+          });
+
+          view.watch("viewpoint", () => sync(view));
+        }
+
+
+      
+     var fieldsA = [
+            { name: "ToA23", alias: "Traffic Accidents" },
+            { name: "ToVeh23", alias: "Number of Vehicles" },
+            { name: "ToPerKi23", alias: "Casualties" },
+            { name: "ToPerInj23", alias: "Injuries" },
+            { name: "ToA22", alias: "Traffic Accidents" },
+            { name: "ToVeh22", alias: "Number of Vehicles" },
+            { name: "ToPerKi22", alias: "Casualties" },
+            { name: "ToPerInj22", alias: "Injuries" },
+            { name: "ToA21", alias: "Traffic Accidents" },
+            { name: "ToVeh21", alias: "Number of Vehicles" },
+            { name: "ToPerKi21", alias: "Casualties" },
+            { name: "ToPerInj21", alias: "Injuries" },
+            { name: "ToA20", alias: "Traffic Accidents" },
+            { name: "ToVeh20", alias: "Number of Vehicles" },
+            { name: "ToPerKi20", alias: "Casualties" },
+            { name: "ToPerInj20", alias: "Injuries" },
+            { name: "ToA19", alias: "Traffic Accidents" },
+            { name: "ToVeh19", alias: "Number of Vehicles" },
+            { name: "ToPerKi19", alias: "Casualties" },
+            { name: "ToPerInj19", alias: "Injuries" },
+            { name: "ToA18", alias: "Traffic Accidents" },
+            { name: "ToVeh18", alias: "Number of Vehicles" },
+            { name: "ToPerKi18", alias: "Casualties" },
+            { name: "ToPerInj18", alias: "Injuries" },
+            { name: "ToA17", alias: "Traffic Accidents" },
+            { name: "ToVeh17", alias: "Number of Vehicles" },
+            { name: "ToPerKi17", alias: "Casualties" },
+            { name: "ToPerInj17", alias: "Injuries" },
+            { name: "ToA16", alias: "Traffic Accidents" },
+            { name: "ToVeh16", alias: "Number of Vehicles" },
+            { name: "ToPerKi16", alias: "Casualties" },
+            { name: "ToPerInj16", alias: "Injuries" },
+            { name: "ToA15", alias: "Traffic Accidents" },
+            { name: "ToVeh15", alias: "Number of Vehicles" },
+            { name: "ToPerKi15", alias: "Casualties" },
+            { name: "ToPerInj15", alias: "Injuries" },
+            { name: "ToA14", alias: "Traffic Accidents" },
+            { name: "ToVeh14", alias: "Number of Vehicles" },
+            { name: "ToPerKi14", alias: "Casualties" },
+            { name: "ToPerInj14", alias: "Injuries" },
+          ];
+        
+      // Initial popup template (overwritten later by each updateRenderer anyway)
+          var template = {
+            title: "{Region}",
+            content:
+              "<b>Accident Cases:</b> {ToA} <br> <b>Vehicles Involved:</b> {ToVeh} <br> <b>Casualties:</b> {ToPerKi} <br> <b>Injuries:</b> {ToPerInj}",
+          };
+
+          // CSV Layer
+          var accidentData = new CSVLayer({
+            url: "https://dl.dropboxusercontent.com/scl/fi/rql5p9m2z0c0wwnxlgmi9/AccidentData.csv?rlkey=9h9uq0zc7w7ijh3gvzy2hew0y&st=zf88axbo&dl=0",
+            title: "Accidents Cases",
+            fields: fieldsA,
+            popupTemplate: template,
+          });
+
+          mymap.add(accidentData);
+
+
+        // Call your default renderer function so that proportional symbols show immediately
+          updateRenderer2023("ToA");
+          
+          // Keep track of year as a STRING
+          let selectedYear = "2023";
+
+
+          // ----------------- 3) RENDERER FUNCTIONS (ONE PER YEAR) -----------------
+          // NOTE: Each function sets the layer's renderer + popupTemplate, then calls refresh().
+
+            function updateRenderer2023(dataType) {
+            var renderer;
+            var popupContent;
+            // We need a local 'fieldName' that changes with dataType
+            var fieldName;
+
+            switch (dataType) {
+            case "ToA": // Traffic Accidents
+              fieldName = "ToA23";
+              renderer = {
+                type: "simple",
+                symbol: {
+                  type: "simple-marker",
+                  color: [231, 76, 60, 0.9],
+                  outline: { width: 0.6, color: "white" }
+                },
+                visualVariables: [
+                  {
+                    type: "size",
+                    field: "ToA23",
+                    stops: [
+                      { value: 97, size: "10px" },
+                      { value: 267, size: "25px" },
+                      { value: 739, size: "40px" },
+                      { value: 2039, size: "50px" },
+                      { value: 5633, size: "70px" }
+                    ]
+                  }
+                ]
+              };
+              popupContent = "Region: {Region}<br>Accident Cases: {ToA23}<br>Accident by Type:<br>{AcURL23}";
+
+              break;
+
+
+
+
+     case "ToVeh": // Vehicles
+      fieldName = "ToVeh23";
+      // same color/size logic as your code...
+      renderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          color: [142, 68, 173, 0.9],
+          outline: { width: 0.6, color: "white" }
+        },
+        visualVariables: [
+          {
+            type: "size",
+            field: "ToVeh23",
+            stops: [
+              { value: 124, size: "10px" },
+              { value: 375, size: "25px" },
+              { value: 1137, size: "40px" },
+              { value: 3438, size: "50px" },
+              { value: 10403, size: "70px" }
+            ]
+          }
+        ]
+      };
+      popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh23}";
+      break;
+
+    case "ToPerKi": // Casualties
+      fieldName = "ToPerKi23";
+      renderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          color: [176, 48, 96, 0.9],
+          outline: { width: 0.6, color: "white" },
+        },
+        visualVariables: [
+          {
+            type: "size",
+            field: "ToPerKi23",
+            stops: [
+              { value: 30, size: "10px" },
+              { value: 65, size: "25px" },
+              { value: 140, size: "40px" },
+              { value: 302, size: "50px" },
+              { value: 652, size: "70px" },
+            ],
+          },
+        ],
+      };
+      popupContent = "Region: {Region}<br>Casualties: {ToPerKi23}";
+      break;               
+
+    case "ToPerInj": // Injuries
+      fieldName = "ToPerInj23";
+      renderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          color: [243, 156, 18, 0.9],
+          outline: { width: 0.6, color: "white" },
+        },
+        visualVariables: [
+          {
+            type: "size",
+            field: "ToPerInj23",
+            stops: [
+              { value: 56, size: "10px" },
+              { value: 164, size: "25px" },
+              { value: 482, size: "40px" },
+              { value: 1415, size: "50px" },
+              { value: 4156, size: "70px" },
+            ],
+          },
+        ],
+      };
+      popupContent = "Region: {Region}<br>Injuries: {ToPerInj23}";
+      break;
+  }
+
+  // Filter out features with null values in that field
+  accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+  // Apply the renderer and popup
+  accidentData.renderer = renderer;
+  accidentData.popupTemplate = {
+    title: "AccidentData Info",
+    content: popupContent
+  };
+
+  // Refresh to apply changes
+  accidentData.refresh();
+  }
+
+    function updateRenderer2022(dataType) {
+      var renderer;
+      var popupContent;
+      // We need a local 'fieldName' that changes with dataType
+      var fieldName;
+      
+      switch (dataType) {
+        case "ToA": // Traffic Accidents
+          fieldName = "ToA22";
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: [231, 76, 60, 0.9],
+              outline: { width: 0.6, color: "white" },
+            },
+            visualVariables: [
+              {
+                type: "size",
+                field: "ToA22",  // Field that controls the size of the marker
+                stops: [
+                  { value: 97, size: "10px" },
+                  { value: 267, size: "25px" },
+                  { value: 739, size: "40px" },
+                  { value: 2039, size: "50px" },
+                  { value: 5633, size: "70px" },
+                ],
+              },
+            ],
+          };
+          popupContent = "Region: {Region}<br>Accident Cases: {ToA22}";
+          break;
+          
+        case "ToVeh": // Type of Vehicle
+          fieldName = "ToVeh22";
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: [52, 152, 219, 0.9],
+              outline: { width: 0.6, color: "white" },
+            },
+            visualVariables: [
+              {
+                type: "size",
+                field: "ToVeh22",
+                stops: [
+                  { value: 124, size: "10px" },
+                  { value: 375, size: "25px" },
+                  { value: 1137, size: "40px" },
+                  { value: 3438, size: "50px" },
+                  { value: 10403, size: "70px" },
+                ],
+              },
+            ],
+          };
+          popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh22}";
+          break;
+
+        case "ToPerKi": // Casualties
+          fieldName = "ToPerKi22";
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: [142, 68, 173, 0.9],
+              outline: { width: 0.6, color: "white" },
+            },
+            visualVariables: [
+              {
+                type: "size",
+                field: "ToPerKi22",
+                stops: [
+                  { value: 30, size: "10px" },
+                  { value: 65, size: "25px" },
+                  { value: 140, size: "40px" },
+                  { value: 302, size: "50px" },
+                  { value: 652, size: "70px" },
+                ],
+              },
+            ],
+          };
+          popupContent = "Region: {Region}<br>Casualties: {ToPerKi22}";
+          break;
+
+        case "ToPerInj": // Injuries
+          fieldName = "ToPerInj22";
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: [243, 156, 18, 0.9],
+              outline: { width: 0.6, color: "white" },
+            },
+            visualVariables: [
+              {
+                type: "size",
+                field: "ToPerInj22",
+                stops: [
+                  { value: 56, size: "10px" },
+                  { value: 164, size: "25px" },
+                  { value: 482, size: "40px" },
+                  { value: 1415, size: "50px" },
+                  { value: 4156, size: "70px" },
+                ],
+              },
+            ],
+          };
+          popupContent = "Region: {Region}<br>Injuries: {ToPerInj22}";
+          break;
+          
+          }
+
+      // Filter out features where `fieldName` is null (or empty)
+      //    so they don't show up on the map at all
+      accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+      // Apply renderer and popup
+
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+      
+       function updateRenderer2021(dataType) {
+        var renderer;
+        var popupContent;
+        // We need a local 'fieldName' that changes with dataType
+        var fieldName;
+        
+        switch (dataType) {
+           case "ToA": // Traffic Accidents
+            fieldName = "ToA21";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA21",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA21}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh21";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh21",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh21}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi21";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi21",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi21}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj21";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj21",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj21}";
+            break;
+
+            }
+
+
+        // Filter out features where `fieldName` is null (or empty)
+        //    so they don't show up on the map at all
+        accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+  
+          // Apply renderer and popup
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+    
+
+        function updateRenderer2020(dataType) {
+          var renderer;
+          var popupContent;
+          // We need a local 'fieldName' that changes with dataType
+          var fieldName;
+              
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA20";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA20",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA20}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh20";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh20",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh20}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi20";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi20",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi20}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj20";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj20",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj20}";
+            break;
+        }
+
+    // Filter out features where `fieldName` is null (or empty)
+    //    so they don't show up on the map at all
+    accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+    // Apply renderer and popup
+
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+          
+        function updateRenderer2019(dataType) {
+          var renderer;
+          var popupContent;
+         // We need a local 'fieldName' that changes with dataType
+          var fieldName;     
+          
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA19";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA19",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA19}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh19";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh19",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh19}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi19";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi19",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi19}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj19";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj19",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj19}";
+            break;
+
+          }
+        // Filter out features where `fieldName` is null (or empty)
+        //    so they don't show up on the map at all
+        accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+        // Apply renderer and popup
+
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+
+        function updateRenderer2018(dataType) {
+          var renderer;
+          var popupContent;
+         // We need a local 'fieldName' that changes with dataType
+            var fieldName;
+
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            
+            fieldName = "ToA18";renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA18",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA18}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh18";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh18",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh18}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi18";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi18",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi18}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj18";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj18",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj18}";
+            break;
+
+          }
+
+
+        // Filter out features where `fieldName` is null (or empty)
+  //    so they don't show up on the map at all
+  accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+  // Apply renderer and popup
+
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+
+        function updateRenderer2017(dataType) {
+          var renderer;
+          var popupContent;
+          // We need a local 'fieldName' that changes with dataType
+          var fieldName;
+
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA17";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA17",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA17}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh17";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh17",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh17}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi17";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi17",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi17}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj17";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj17",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj17}";
+            break;
+
+          }
+
+
+          // Filter out features where `fieldName` is null (or empty)
+          //    so they don't show up on the map at all
+          accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+          // Apply renderer and popup
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+
+        function updateRenderer2016(dataType) {
+          var renderer;
+          var popupContent;
+          // We need a local 'fieldName' that changes with dataType
+          var fieldName;
+
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA16";  
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA16",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA16}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh16";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh16",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh16}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi16";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi16",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi16}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj16";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj16",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj16}";
+            break;
+          }
+
+
+// Filter out features where `fieldName` is null (or empty)
+  //    so they don't show up on the map at all
+  accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+  // Apply renderer and popup
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+
+        function updateRenderer2015(dataType) {
+          var renderer;
+          var popupContent;
+          // We need a local 'fieldName' that changes with dataType
+          var fieldName;    
+          
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA15";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA15",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA15}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh15";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh15",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh15}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi15";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi15",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi15}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj15";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj15",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj15}";
+            break;
+
+          }
+
+          // Filter out features where `fieldName` is null (or empty)
+  //    so they don't show up on the map at all
+  accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+  // Apply renderer and popup
+
+            accidentData.renderer = renderer;
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+            accidentData.refresh();
+          }
+
+        function updateRenderer2014(dataType) {
+          var renderer;
+          var popupContent;
+          // We need a local 'fieldName' that changes with dataType
+          var fieldName;    
+          
+          switch (dataType) {
+            case "ToA": // Traffic Accidents
+            fieldName = "ToA14";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [231, 76, 60, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToA14",  // Field that controls the size of the marker
+                  stops: [
+                    { value: 97, size: "10px" },
+                    { value: 267, size: "25px" },
+                    { value: 739, size: "40px" },
+                    { value: 2039, size: "50px" },
+                    { value: 5633, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Accident Cases: {ToA14}";
+            break;
+            
+          case "ToVeh": // Type of Vehicle
+            fieldName = "ToVeh14";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [52, 152, 219, 0.9],
+                outline: { width: 0.6, color: "white"},
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToVeh14",
+                  stops: [
+                    { value: 124, size: "10px" },
+                    { value: 375, size: "25px" },
+                    { value: 1137, size: "40px" },
+                    { value: 3438, size: "50px" },
+                    { value: 10403, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Number of Vehicles Involved: {ToVeh14}";
+            break;
+
+          case "ToPerKi": // Casualties
+            fieldName = "ToPerKi14";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [142, 68, 173, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerKi14",
+                  stops: [
+                    { value: 30, size: "10px" },
+                    { value: 65, size: "25px" },
+                    { value: 140, size: "40px" },
+                    { value: 302, size: "50px" },
+                    { value: 652, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Casualties: {ToPerKi14}";
+            break;
+
+          case "ToPerInj": // Injuries
+            fieldName = "ToPerInj14";
+            renderer = {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: [243, 156, 18, 0.9],
+                outline: { width: 0.6, color: "white" },
+              },
+              visualVariables: [
+                {
+                  type: "size",
+                  field: "ToPerInj14",
+                  stops: [
+                    { value: 56, size: "10px" },
+                    { value: 164, size: "25px" },
+                    { value: 482, size: "40px" },
+                    { value: 1415, size: "50px" },
+                    { value: 4156, size: "70px" },
+                  ],
+                },
+              ],
+            };
+            popupContent = "Region: {Region}<br>Injuries: {ToPerInj14}";
+            break; 
+      }
+
+      // Filter out features where `fieldName` is null (or empty)
+      //    so they don't show up on the map at all
+      accidentData.definitionExpression = fieldName + " IS NOT NULL";
+
+      // Apply renderer and popup
+
+      // Apply the renderer to the layer
+            accidentData.renderer = renderer;
+      // Update the popup template dynamically         
+            accidentData.popupTemplate = {
+              title: "AccidentData Info",
+              content: popupContent,
+            };
+      // Refresh the layer to apply the renderer and popup changes
+            accidentData.refresh();
+          }
+  
+      function applyCurrentLayer() {
+        switch (selectedYear) {
+          case "2023":
+            updateRenderer2023(selectedLayerType);
+            break;
+          case "2022":
+            updateRenderer2022(selectedLayerType);
+            break;
+          case "2021":
+            updateRenderer2021(selectedLayerType);
+            break;
+          case "2020":
+            updateRenderer2020(selectedLayerType);
+            break;
+          case "2019":
+            updateRenderer2019(selectedLayerType);
+            break;
+          case "2018":
+            updateRenderer2018(selectedLayerType);
+            break;
+          case "2017":
+            updateRenderer2017(selectedLayerType);
+            break;
+          case "2016":
+            updateRenderer2016(selectedLayerType);
+            break;
+          case "2015":
+            updateRenderer2015(selectedLayerType);
+            break;
+          case "2014":
+            updateRenderer2014(selectedLayerType);
+            break;
+
+          default:
+            updateRenderer2023(selectedLayerType);
+          
+    }
+    console.log(`Re-applied layer type ${selectedLayerType} for year ${selectedYear}`);
+  }
+
+        // Layer Button functionality to change the renderer based on selected data
+       window.loadTrafficAccidents = function () {
+        switch (selectedYear) {
+          case "2023":
+            updateRenderer2023("ToA");
+            break;
+          case "2022":
+            updateRenderer2022("ToA");
+            break;
+          case "2021":
+            updateRenderer2021("ToA");
+            break;
+          case "2020":
+            updateRenderer2020("ToA");
+            break;
+          case "2019":
+            updateRenderer2019("ToA");
+            break;
+          case "2018":
+            updateRenderer2018("ToA");
+            break;
+          case "2017":
+            updateRenderer2017("ToA");
+            break;
+          case "2016":
+            updateRenderer2016("ToA");
+            break;
+          case "2015":
+            updateRenderer2015("ToA");
+            break;
+          case "2014":
+            updateRenderer2014("ToA");
+            break; 
+          
+         default:
+                updateRenderer2023("ToA"); // fallback
+
+          }
+            console.log(`Re-applied layer type ${selectedLayerType} for year ${selectedYear}`);
+          };
+
+
+      window.loadTypeOfVehicle = function () {
+        switch (selectedYear) {
+          case "2023":
+            updateRenderer2023("ToVeh");
+            break;
+          case "2022":
+            updateRenderer2022("ToVeh");
+            break;
+          case "2021":
+            updateRenderer2021("ToVeh");
+            break;
+          case "2020":
+            updateRenderer2020("ToVeh");
+            break;
+          case "2019":
+            updateRenderer2019("ToVeh");
+            break;
+          case "2018":
+            updateRenderer2018("ToVeh");
+            break;
+          case "2017":
+            updateRenderer2017("ToVeh");
+            break;
+          case "2016":
+            updateRenderer2016("ToVeh");
+            break;
+          case "2015":
+            updateRenderer2015("ToVeh");
+            break;
+          case "2014":
+            updateRenderer2014("ToVeh");
+            break; 
+
+          default:
+                updateRenderer2023("ToVeh");
+
+          }
+            console.log(`Re-applied layer type ${selectedLayerType} for year ${selectedYear}`);
+          };   
+
+    window.loadCasualties = function () {
+        switch (selectedYear) {
+          case "2023":
+            updateRenderer2023("ToPerKi");
+            break;
+          case "2022":
+            updateRenderer2022("ToPerKi");
+            break;
+          case "2021":
+            updateRenderer2021("ToPerKi");
+            break;
+          case "2020":
+            updateRenderer2020("ToPerKi");
+            break;
+          case "2019":
+            updateRenderer2019("ToPerKi");
+            break;
+          case "2018":
+            updateRenderer2018("ToPerKi");
+            break;
+          case "2017":
+            updateRenderer2017("ToPerKi");
+            break;
+          case "2016":
+            updateRenderer2016("ToPerKi");
+            break;
+          case "2015":
+            updateRenderer2015("ToPerKi");
+            break;
+          case "2014":
+            updateRenderer2014("ToPerKi");
+            break; 
+          
+          default:
+                updateRenderer2023("ToPerKi");
+
+          }
+            console.log(`Re-applied layer type ${selectedLayerType} for year ${selectedYear}`);
+          };
+
+     window.loadInjuries = function () {
+        switch (selectedYear) {
+          case "2023":
+            updateRenderer2023("ToPerInj");
+            break;
+          case "2022":
+            updateRenderer2022("ToPerInj");
+            break;
+          case "2021":
+            updateRenderer2021("ToPerInj");
+            break;
+          case "2020":
+            updateRenderer2020("ToPerInj");
+            break;
+          case "2019":
+            updateRenderer2019("ToPerInj");
+            break;
+          case "2018":
+            updateRenderer2018("ToPerInj");
+            break;
+          case "2017":
+            updateRenderer2017("ToPerInj");
+            break;
+          case "2016":
+            updateRenderer2016("ToPerInj");
+            break;
+          case "2015":
+            updateRenderer2015("ToPerInj");
+            break;
+          case "2014":
+            updateRenderer2014("ToPerInj");
+            break; 
+
+          default:
+                updateRenderer2023("ToPerInj");
+
+          }
+            console.log(`Re-applied layer type ${selectedLayerType} for year ${selectedYear}`);
+          };
+          
+       // 3) Then define your layer button functions:
+        window.loadTrafficAccidents = function () {
+          selectedLayerType = "ToA";
+          applyCurrentLayer();
+        };
+
+        window.loadTypeOfVehicle = function () {
+          selectedLayerType = "ToVeh";
+          applyCurrentLayer();
+        };  
+
+        window.loadCasualties = function () {
+          selectedLayerType = "ToPerKi";
+          applyCurrentLayer();
+        };      
+
+         window.loadInjuries = function () {
+          selectedLayerType = "ToPerInj";
+          applyCurrentLayer();
+        };      
+
+      // a) "Reset" button: re-center the map and set to default
+          document.getElementById("resetBtn").addEventListener("click", function () {
+      // Re-center the map
+      view.goTo({ center: [-1.023194, 7.946527], zoom: 6.5 });
+  
+      // Reset to default year (2023) and update the dropdown
+      selectedYear = "2023";
+      document.getElementById("year-select").value = "2023";
+  
+      // Set default layer type and apply the default layer using loadTrafficAccidents()
+      selectedLayerType = "ToA";
+      loadTrafficAccidents();  // This will call applyCurrentLayer() internally
+
+  
+      // Update the active button UI: Remove active state from all buttons,
+      // then add active state to the default Traffic Accidents button.
+      const allLayerButtons = document.querySelectorAll('.control-buttons button');
+      allLayerButtons.forEach((btn) => {
+      btn.classList.remove('active-button');
+    });
+
+    if (allLayerButtons.length > 0) {
+      // Assuming the first button corresponds to Traffic Accidents
+      allLayerButtons[0].classList.add('active-button');
+    }
+  
+      console.log("Map reset to default view for year 2023 with Traffic Accidents layer");
+    });
+
+    // b) Year dropdown
+    let selectedLayerType = "ToA"; // default
+
+      document.getElementById("year-select").addEventListener("change", function () {
+        selectedYear = this.value;
+        console.log(`Year changed to ${selectedYear}`);
+        applyCurrentLayer(); 
+          });
+
+      // ---- Default Initialization Code ----
+      window.addEventListener("load", function () {
+        // Set default year and update the dropdown
+        selectedYear = "2023";
+        document.getElementById("year-select").value = "2023";
+
+    // Reset the opacity slider to default (1)
+      const opacitySlider = document.querySelector(".opacity-slider");
+      const opacityDisplay = document.querySelector(".opacity");
+      opacitySlider.value = 1;
+      opacityDisplay.innerText = "1";
+      roads_2.opacity = 1;
+      // Call the default layer function to set the map to Traffic Accidents
+      loadTrafficAccidents();
+
+    // Update the active button UI: Remove any active state and then set it on the Traffic Accidents button
+    const layerButtons = document.querySelectorAll(".layer-buttons-container .control-buttons button");
+    layerButtons.forEach((btn) => {
+      btn.classList.remove("active-button");
+    });
+    if (layerButtons.length > 0) {
+      // Assuming the first button corresponds to Traffic Accidents
+      layerButtons[0].classList.add("active-button");
+    }
+    console.log("Default layer selected on load: Traffic Accidents for 2023");
+  });
+
+
+    //  LEGEND WIDGET 
+          const legend1 = new Legend({
+            view: view,
+            container: "legendListDiv",
+            layerInfos: [
+          {
+            layer: accidentData,
+            title: "Accident Cases 2014 - 2023"
+          },
+          {
+            layer: roads_2,
+            title: "Roads"
+           },
+          {
+            layer: regions,
+            title: "Regions"
+
+          }
+        ]
+      });
+
+      // make sure you actually close this legend definition
+
+          const legend2 = new Legend({
+            view: view2,
+            container: "legendListDiv2",
+            layerInfos: [
+            
+              {
+              layer: population_data,
+              title: "Population Density",
+              }
+             ],
+          });
+        }
+      );
+          
+function setActiveButton(btnElement) {
+  // 1) Get all layer buttons
+  const allButtons = document.querySelectorAll('.control-buttons button');
+
+  // 2) Remove the active class from all
+  allButtons.forEach((btn) => {
+    btn.classList.remove('active-button');
+  });
+
+  // 3) Add active class to the clicked one
+  btnElement.classList.add('active-button');
+  }
+
+  // Add a simple event listener to hide the splash screen when "Explore Map" is clicked
+      document.addEventListener("DOMContentLoaded", function() {
+  var exploreBtn = document.querySelector(".start-journey-btn");
+  exploreBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    var intro = document.getElementById("intro");
+    // Start the fade-out transition
+    intro.style.opacity = "0";
+    // After 1.5s (matching the CSS transition), remove the overlay from the layout
+    setTimeout(function() {
+      intro.style.display = "none";
+      // Optionally scroll to the map container if needed
+      document.getElementById("mainMapContainer").scrollIntoView({ behavior: "smooth" });
+    }, 1500);
+  });
+});
+
+</script>
+
+</head>
+
+  <body>
+
+    <!-- INTRO / SPLASH SECTION -->
+    <section id="intro">
+      <div class="intro-content">
+        <h1>Analyzing Road Security on Ghana's Highways: An Interactive Visualization of Road Accidents from 2014 - 2023</h1>
+         <!-- Byline added below the paragraph -->
+        <p class="byline">By Kwamina Kurefi Edonu</p>
+        <p>
+          Road traffic accidents remain a grave and persistent threat to the well-being and economic progress of millions of Ghanaians, posing a significant barrier to the country’s development. In 2021, Ghana recorded 16,182 accidents, resulting in 2,970 fatalities and 15,935 injuries, according to the Motor Traffic and Transport Department (MTTD) of the Ghana Police Service. Use this interactive tool to explore Ghana’s road accident data. The first map visualizes accident incidents from 2014 to 2023, illustrating how patterns shift over time, while, the second map highlights population data, providing context on how population distribution may influence the frequency and severity of road accidents.
+        </p>
+        <!-- Clicking this link scrolls to the main map container -->
+        <a href="#mainMapContainer" class="start-journey-btn">Explore Map</a>
+      </div>
+    </section>
+
+  <!-- MAIN MAP SECTION (Anchored) -->
+  <div id="mainMapContainer">
+    <!-- HEADER -->
+    <div id="header">
+      <h1>Analyzing Road Security on Ghana's Highways</h1>
+       <div class="notes-container">
+        <p> The regions on this map may differ from Ghana’s official boundaries, as they are defined by the Ghana Police Service<br> for regional command. Use the plus and minus buttons to zoom, and the opacity slider to adjust road intensity.
+        </p>
+      </div>
+    </div>
+
+    <!-- MAIN CONTAINER with 3 columns -->
+    <div id="mainContainer">
+      
+      <!-- LEFT COLUMN: #main2 (Legend, controls) -->
+      <div id="main2">
+
+     
+        <div id="legendListDiv"></div>
+        
+  
+        <!-- Year Dropdown -->
+        <div class="dropdown">
+          <div id="yearSelect">Select by Year</div>
+          <label for="year-select"></label>
+          <select id="year-select" autocomplete="off">
+            <script>
+              for (let year = 2014; year <= 2023; year++) {
+                document.write(
+                  `<option value="${year}" ${year === 2023 ? "selected" : ""}>${year}</option>`
+                );
+              }
+            </script>
+          </select>
+        </div>
+
+    <!-- LAYER BUTTONS in their own container -->
+  <div class="layer-buttons-container">
+    <div id="titlecontrolButtonsDiv">Select Layer to Change Map</div>
+    <div class="control-buttons">
+  <button onclick="setActiveButton(this); loadTrafficAccidents()">Traffic Accidents</button>
+  <button onclick="setActiveButton(this); loadTypeOfVehicle()">Vehicles Involved</button>
+  <button onclick="setActiveButton(this); loadCasualties()">Casualties</button>
+  <button onclick="setActiveButton(this); loadInjuries()">Injuries</button>
+</div>
+  </div>
+
+   <!-- RESET BUTTON in its own container -->
+  <div class="reset-button-container">
+    <div id="titleResetButtonDiv">Click to restore default Map</div>
+    <div class="control-buttons">
+      <button id="resetBtn">Reset Map</button>
+    </div>
+  </div>
+
+  </div>
+
+      <!-- CENTER COLUMN: #main1 (Map) -->
+      <div id="main1">
+        <div id="viewDiv">
+         <!-- Opacity slider container -->
+          <div id="opacitySlider">
+            <div id="opacityTitle">Roads Opacity Slider = <span class="opacity">1</span></div>
+            <input class="opacity-slider" type="range" min="0" max="1" step="0.001" value="1">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: #main3 (Extra info) -->
+      <div id="main3">
+        
+      <!-- Secondary legend (population) -->
+      <div id="legendListDiv2"></div>
+
+        
+        <div id="viewDiv2"></div>
+        
+      </div>
+
+      <!-- Clear floats if needed for any footer below -->
+      <div class="clearfix"></div>
+    </div>
+  </body>
+</html>
