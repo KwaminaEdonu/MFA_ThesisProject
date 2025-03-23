@@ -15,8 +15,6 @@
       });
     </script>
 
-
-
     <title>Ghana Road Accident Data Visualization</title>
  
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,17 +84,18 @@
         font-size: 2.9rem;
         color: rgba(130, 23, 23, 1.0);
         margin-bottom: 0.5rem;
-        margin-top: 0.4rem;
+        margin-top: 0.2rem;
         text-transform: uppercase;
         letter-spacing: 1px;
+        line-height: 1.1;
 
       }
       .intro-content p {
         font-family: 'Poppins', sans-serif;
         font-size: 1.1rem;
         color: #333;
-        margin-bottom: 1.5rem;
-        line-height: 1.5;
+        margin-bottom: 1.4rem;
+        line-height: 1.4;
       }
       .start-journey-btn {
         display: inline-block;
@@ -262,15 +261,15 @@
 
     /* Position the opacity slider at the bottom of viewDiv */
     #opacitySlider {
-      position: absolute;
       bottom: 16px;  /* Adjust this value to control spacing from the bottom */
-      left: 50%;
-      transform: translateX(-50%);
+      
+     
       width: 100%;   /* Constrained width relative to viewDiv (and thus #main1) */
       box-sizing: border-box; /* Ensures padding is included in the width */
-      background: rgba(128, 128, 128, 0.8);   /* Semi-transparent background for readability */
+      background: rgba(128, 128, 128, 0.7);   /* Semi-transparent background for readability */
       padding: 4px;
-      padding-bottom: 8px;
+      padding-bottom: 15px;
+      padding-bottom: 15px;
       border-radius: 0px;
     }
 
@@ -279,7 +278,6 @@
       display: block;
       width: 97%;
       height: 5px;
-      margin-bottom: 10px;
       margin-left: 12px;
       margin-right: 10px;
       -webkit-appearance: none;
@@ -408,10 +406,12 @@
 
       .notes-container p{
         padding-bottom: 5px;
-    /*    background-color: #f5f5f5; */ /* light background for contrast */
+    /*   background-color: #f5f5f5; */ /* light background for contrast */
         color: #fff;
         font-size: 14px;
-        margin-bottom: 0px;
+        margin-top: 0rem;
+        margin-bottom: 0rem;
+        line-height: 1.3;
      /*     border-top: 1px solid #ccc;  */
      /*   flex: 1 1 auto;  */ /* Fills available space */
         overflow-y: auto; /* Scroll if content overflows */
@@ -426,7 +426,7 @@
   
       .intro-content p {
         font-size: 1.3rem;       /* Increase text size for better legibility */
-        line-height: 1.6;
+        line-height: 1.2rem;
         margin-bottom: 1.75rem;
       }
       .intro-content h1 {
@@ -506,6 +506,14 @@
       }
     }
 
+    @media screen and (min-width: 768px) and (max-width: 1024px) {
+    /* Adjust the map container height or layout for iPad Pro 11 */
+      #viewDiv {
+      height: 80vh; /* Or another value that fits your design */
+    }
+    /* Other layout adjustments as needed for tablets */
+  }
+
        /* For desktop, enable scroll snap for a neat one-screen scroll */
       @media screen and (min-width: 801px) {
         html, body {
@@ -516,6 +524,7 @@
           scroll-snap-align: start;
         }
       }
+
 
       /* Responsive adjustments */
       @media screen and (max-width: 800px) {
@@ -538,7 +547,7 @@
         .notes-container p{
           font-size: 0.95rem; /* ~14px for improved legibility */
           line-height: 1.4;    /* More breathing room between lines */
-          margin-bottom: 0.9rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
+          margin-bottom: 0.7rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
         }
          #intro {
           padding-left: 5px;
@@ -595,23 +604,23 @@
   #intro .intro-content h1 {
     font-size: 1.7rem;
     line-height: 1.1;
-    margin-top: -0.8rem; 
+    margin-top: -1.5rem; 
   }
-  #intro .intro-content p {
+  #intro .intro-content p  {
     font-size: 0.85rem;
-    line-height: 1.3;
-    margin-bottom: 1rem;
+    line-height: 1.35;
+    margin-bottom: 0.8rem;
     margin-top: -0.1rem; 
 
   }
   #header h1 {
     font-size: 27px; /* or your desired size */
     margin-top: 0.3rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
   }
   .notes-container p {
     font-size: 0.9rem;
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
   .intro-content .byline {
@@ -2466,7 +2475,7 @@ function setActiveButton(btnElement) {
          <!-- Byline added below the paragraph -->
         <p class="byline">By Kwamina Kurefi Edonu</p>
         <p>
-          Road traffic accidents remain a grave and persistent threat to the well-being and economic progress of millions of Ghanaians, posing a significant barrier to the country’s development. In 2021, Ghana recorded 16,182 accidents, resulting in 2,970 fatalities and 15,935 injuries, according to the Motor Traffic and Transport Department (MTTD) of the Ghana Police Service. Use this interactive tool to explore Ghana’s road accident data. The first map visualizes accident incidents from 2014 to 2023, while, the second map highlights population data, providing context on how population distribution may influence the frequency and severity of road accidents.
+          Road traffic accidents remain a grave and persistent threat to the well-being and economic progress of millions of Ghanaians, posing a significant barrier to the country’s development. In 2021, Ghana recorded 16,182 accidents, resulting in 2,970 fatalities and 15,935 injuries, according to the Motor Traffic and Transport Department (MTTD) of the Ghana Police Service. Use this interactive tool to explore Ghana’s road accident data. The first map visualizes accident incidents from 2014 to 2023, while, the second map highlights population data. 
         </p>
         <!-- Clicking this link scrolls to the main map container -->
         <a href="#mainMapContainer" class="start-journey-btn">Explore Map</a>
@@ -2532,14 +2541,14 @@ function setActiveButton(btnElement) {
 
       <!-- CENTER COLUMN: #main1 (Map) -->
       <div id="main1">
-        <div id="viewDiv">
+        <div id="viewDiv"></div>
          <!-- Opacity slider container -->
           <div id="opacitySlider">
             <div id="opacityTitle">Roads Opacity Slider = <span class="opacity">1</span></div>
             <input class="opacity-slider" type="range" min="0" max="1" step="0.001" value="1">
           </div>
         </div>
-      </div>
+      
 
       <!-- RIGHT COLUMN: #main3 (Extra info) -->
       <div id="main3">
