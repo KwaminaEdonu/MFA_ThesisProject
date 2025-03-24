@@ -15,6 +15,8 @@
       });
     </script>
 
+
+
     <title>Ghana Road Accident Data Visualization</title>
  
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,7 +60,7 @@
         justify-content: center;
         background: url('https://via.placeholder.com/1200x900.png?text=Mountains+Image') center/cover no-repeat;
         text-align: center;
-        padding: 20px;
+        padding: 10px;
         transition: opacity 1.5s ease-out;  /* Slows down the fade-out */
       }
 
@@ -76,18 +78,18 @@
         position: relative;
         max-width: 800px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 10px;
         z-index: 10;
       }
       .intro-content h1 {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'merriweather', serif;
         font-size: 2.9rem;
         color: rgba(130, 23, 23, 1.0);
         margin-bottom: 0.5rem;
         margin-top: 0.2rem;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 1px;
-        line-height: 1.1;
+        line-height: 1.3;
 
       }
       .intro-content p {
@@ -95,11 +97,11 @@
         font-size: 1.1rem;
         color: #333;
         margin-bottom: 1.4rem;
-        line-height: 1.4;
+        line-height: 1.5;
       }
       .start-journey-btn {
         display: inline-block;
-        background: rgba(103, 15, 15, 1.0);
+        background: rgba(130, 20, 15, 1.0); 
         color: #fff;
         padding: 0.65rem 1.5rem;
         font-size: 1rem;
@@ -108,15 +110,15 @@
         transition: background 0.3s ease;
       }
       .start-journey-btn:hover {
-        background: rgba(52, 152, 219, 0.9);
+        background: rgba(103, 15, 15, 1.0);
       }
 
        .intro-content .byline {
         font-family: 'Poppins', sans-serif;
-        font-size: 1rem;
+        font-size: 0.9rem;
         margin-top: 5px;
         text-align: center;
-        padding: 1px 0;
+        padding: 0px 0;
       }
 
       /* ----------------- Header and Main Layout ----------------- */
@@ -130,7 +132,7 @@
         
       }
       #header h1 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Merriweather', serif;
         margin: 0;
         padding: 5px 20px;
         font-size: 38px;   /* Default: 38px ≈ 2.375rem */
@@ -233,6 +235,7 @@
         width: 100%;
         background-color: white;
         color: black;
+        font-size: 1.1rem;
         margin-bottom: 6px;
         overflow-y: auto; /* Scroll if content overflows */
       }
@@ -243,6 +246,7 @@
         width: 100%;
         background-color: white;
         color: black;
+        font-size: 1.1rem;
         margin-top: 10px;
         margin-bottom: 5px;
         overflow-y: auto; /* Scroll if content overflows */
@@ -408,10 +412,10 @@
         padding-bottom: 5px;
     /*   background-color: #f5f5f5; */ /* light background for contrast */
         color: #fff;
-        font-size: 14px;
+        font-size: 15px;
         margin-top: 0rem;
         margin-bottom: 0rem;
-        line-height: 1.3;
+        line-height: 1.4;
      /*     border-top: 1px solid #ccc;  */
      /*   flex: 1 1 auto;  */ /* Fills available space */
         overflow-y: auto; /* Scroll if content overflows */
@@ -423,16 +427,19 @@
         body {
         font-size: 1.2rem;
       }
-  
+       .intro-content {
+         max-width: 1200px;
+      }
       .intro-content p {
-        font-size: 1.3rem;       /* Increase text size for better legibility */
-        line-height: 1.2rem;
+        font-size: 1.2rem;       /* Increase text size for better legibility */
+        line-height: 1.8rem;
         margin-bottom: 1.75rem;
       }
       .intro-content h1 {
-        font-size: 3rem;       /* A larger heading on high-resolution displays */
+        font-size: 3.3rem;       /* A larger heading on high-resolution displays */
         margin-top: 0.5rem;
         margin-bottom: 0.75rem;
+
       }
 
       /* Adjust header font size */
@@ -440,7 +447,7 @@
         font-size: 3rem;
       }
       .notes-container p{
-        font-size: 1.1rem;  /* ~18px for high-res screens */  /* 16px = 1rem on high-resolution screens */
+        font-size: 1.18rem;  /* ~18px for high-res screens */  /* 16px = 1rem on high-resolution screens */
         line-height: 1.6;     /* Provides comfortable spacing */
         margin-bottom: 1rem; /* Adjust spacing between paragraphs */
       }      
@@ -511,6 +518,10 @@
       #viewDiv {
       height: 80vh; /* Or another value that fits your design */
     }
+     .intro-content {
+      max-width: 700px;
+    }
+
     /* Other layout adjustments as needed for tablets */
   }
 
@@ -525,11 +536,12 @@
         }
       }
 
-
       /* Responsive adjustments */
       @media screen and (max-width: 800px) {
       /* Make the header text smaller on smaller screens */
-        
+      .intro-content {
+        max-width: 88%; 
+      }
       #mainContainer {
         flex-direction: column; /* stack columns on small screens */
         overflow: visible; /* Allow internal scrolling if needed */
@@ -545,7 +557,7 @@
           font-size: 32px;   /* ~1.875rem on small-to-medium screens */
         }
         .notes-container p{
-          font-size: 0.95rem; /* ~14px for improved legibility */
+          font-size: 0.9rem; /* ~14px for improved legibility */
           line-height: 1.4;    /* More breathing room between lines */
           margin-bottom: 0.7rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
         }
@@ -556,11 +568,11 @@
 
         .intro-content p {
           font-size: 1rem;
-          line-height: 1.4;
+          line-height: 1.5;
           margin-bottom: 1.4rem;
         }
         .intro-content h1 {
-          font-size: 2.4rem;
+          font-size: 2.3rem;
           margin-top: 0.35rem;
           margin-bottom: 0.55rem;
         }
@@ -592,56 +604,63 @@
         #legendListDiv {
           height: auto !important;   /* Remove the fixed height */
           overflow-y: visible !important; /* Ensure no scrolling */
+          font-size: 1rem;
+
+        #legendListDiv2 {
+          font-size: 1rem;
       }
     }
 
     @media screen and (min-width: 360px) and (max-width: 600px) {
-  /* Your mobile styles here */
-  #intro {
-    padding-left: 4px;
-    padding: 0px;
-  }
-  #intro .intro-content h1 {
-    font-size: 1.7rem;
-    line-height: 1.1;
-    margin-top: -1.5rem; 
-  }
-  #intro .intro-content p  {
-    font-size: 0.85rem;
-    line-height: 1.35;
-    margin-bottom: 0.8rem;
-    margin-top: -0.1rem; 
+   /* Your mobile styles here */
+    .intro-content {
+      max-width: 90%;
+    }
+    #intro {
+      padding-left: 4px;
+      padding: 0px;
+    }
 
-  }
-  #header h1 {
-    font-size: 27px; /* or your desired size */
-    margin-top: 0.3rem;
-    margin-bottom: 0.3rem;
-  }
-  .notes-container p {
-    font-size: 0.9rem;
-    line-height: 1.3;
-  }
+    #intro .intro-content h1 {
+      font-size: 1.8rem;
+      line-height: 1.4;
+      margin-top: -1.6rem; 
+    }
+    #intro .intro-content p  {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 0.8rem;
+      margin-top: -0.1rem; 
 
-  .intro-content .byline {
-    font-size: 0.8rem;
-    margin-top: 4px;   
+    }
+    #header h1 {
+      font-size: 27px; /* or your desired size */
+      margin-top: 0.3rem;
+      margin-bottom: 0.3rem;
+    }
+    .notes-container p {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .intro-content .byline {
+      font-size: 0.8rem;
+      margin-top: 4px;   
+    }
+
+    /* Reorder for mobile */
+    #main1 { order: 1; }
+    #main2 { order: 2; }
+    #main3 { order: 3; }
+
+    /* Legends */
+    #legendListDiv,
+    #legendListDiv2 {
+      font-size: 1rem;
+      padding: 8px;
+      max-height: 350px;
+    }
   }
-
-
-  /* Reorder for mobile */
-  #main1 { order: 1; }
-  #main2 { order: 2; }
-  #main3 { order: 3; }
-
-  /* Legends */
-  #legendListDiv,
-  #legendListDiv2 {
-    font-size: 1.1rem;
-    padding: 8px;
-    max-height: 350px;
-  }
-}
 
    
     </style>
