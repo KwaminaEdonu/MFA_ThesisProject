@@ -523,15 +523,24 @@
      /* Use a row (desktop) layout */
     #mainContainer {
     flex-direction: row;
+     height: auto; /* ensure full viewport height */
   }
+
     /* Adjust the map container height for landscape */
     #viewDiv {
-    height: 80vh; /* Experiment with a value that fits your design */
+    height: 70vh; /* Experiment with a value that fits your design */
     }
   
     /* You can keep your intro content and header sizes similar to default desktop */
     .intro-content {
     max-width: 800px;
+     margin: 0 auto;
+  }
+  #header h1 {
+    max-width: 1200px;
+    margin: 0 auto;
+    font-size: 38px; /* or another desktop value */
+  
   }
     /* Other adjustments for tablet landscape can go here */
 }
@@ -540,19 +549,20 @@
       html, body {
         overflow-y: auto; /* Enable vertical scrolling on mobile */
       }
-
+#mainMapContainer,
+  #mainContainer {
+    height: auto;
+  }
   
     /* Adjust the map container height or layout for iPad Pro 11 */
     #mainContainer {
         flex-direction: column; /* stack columns on small screens */
         overflow: visible; /* Allow internal scrolling if needed */
         }
-  }
-    /* Order: map first, then controls, then extra info */
-      #main1 { order: 1; }
-      #main2 { order: 2; }
-      #main3 { order: 3; }
-
+ /* Order the sections for stacking: map first, then controls, then extra info */
+  #main1 { order: 1; }  /* let the map section expand */
+  #main2 { order: 2; }
+  #main3 { order: 3; }
 
        /* Float none, 100% width each */
         #main1, #main2, #main3 {
@@ -692,13 +702,12 @@
         /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
         #viewDiv {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 550px;
-
+          height: 500px;
         }
 
         #viewDiv2 {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 550px; /* or whatever you like on mobile */
+          height: 500px; /* or whatever you like on mobile */
         }
 
         #legendListDiv {
@@ -747,6 +756,16 @@
       line-height: 1.4;
     }
 
+     /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
+        #viewDiv {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 400px;
+        }
+
+        #viewDiv2 {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 400px; /* or whatever you like on mobile */
+        }
     .intro-content .byline {
       font-size: 0.8rem;
       margin-top: 4px;   
