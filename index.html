@@ -519,7 +519,7 @@
         margin-top: 5px; /* Ensure this value is appropriate for large screens */
       }
     }
-   @media screen and (min-width: 1025px) and (max-width: 1200px) and (orientation: landscape) {
+   @media screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
      /* Use a row (desktop) layout */
     #mainContainer {
     flex-direction: row;
@@ -545,13 +545,13 @@
     /* Other adjustments for tablet landscape can go here */
 }
 
-    @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    @media screen and (min-width: 768px) and (max-width: 1194px) and (orientation: portrait) {
       html, body {
         overflow-y: auto; /* Enable vertical scrolling on mobile */
       }
 #mainMapContainer,
   #mainContainer {
-    height: auto;
+    height:auto;
   }
   
     /* Adjust the map container height or layout for iPad Pro 11 */
@@ -581,10 +581,6 @@
           flex: 1 1 auto; /* Let it fill available space */
           height: 650px; /* or whatever you like on mobile */
         }
-
-      #viewDiv {
-      height: 50vh; /* Or another value that fits your design */
-    }
 
      #legendListDiv,
     #legendListDiv2 {
