@@ -132,8 +132,9 @@
         
       }
       #header h1 {
+        max-width: 1200px; /* Set your desired maximum width */
+        margin: 0 auto;    /* Center the header */
         font-family: 'Merriweather', serif;
-        margin: 0;
         padding: 5px 20px;
         font-size: 38px;   /* Default: 38px ≈ 2.375rem */
         font-weight: bold;
@@ -409,6 +410,8 @@
       }
 
       .notes-container p{
+        max-width: 950px; /* Match the header's maximum width */
+        margin: 0 auto;    /* Center it as well */
         padding-bottom: 5px;
     /*   background-color: #f5f5f5; */ /* light background for contrast */
         color: #fff;
@@ -445,8 +448,12 @@
       /* Adjust header font size */
       #header h1 {
         font-size: 3rem;
+        max-width: 1400px;  /* Increase max-width for larger displays */
+        margin: 0 auto;
       }
       .notes-container p{
+        max-width: 1200px;  /* Increase max-width for larger displays */
+        margin: 0 auto;
         font-size: 1.18rem;  /* ~18px for high-res screens */  /* 16px = 1rem on high-resolution screens */
         line-height: 1.6;     /* Provides comfortable spacing */
         margin-bottom: 1rem; /* Adjust spacing between paragraphs */
@@ -512,35 +519,96 @@
         margin-top: 5px; /* Ensure this value is appropriate for large screens */
       }
     }
-    @media screen and (min-width: 1025px) and (max-width: 1200px) {
-      /* Adjust the map container height or layout for iPad Pro 11 landscape */
-      #viewDiv {
-        height: 80vh; /* Experiment with a value that fits your design */
+   @media screen and (min-width: 1025px) and (max-width: 1200px) and (orientation: landscape) {
+     /* Use a row (desktop) layout */
+    #mainContainer {
+    flex-direction: row;
+  }
+    /* Adjust the map container height for landscape */
+    #viewDiv {
+    height: 80vh; /* Experiment with a value that fits your design */
+    }
+  
+    /* You can keep your intro content and header sizes similar to default desktop */
+    .intro-content {
+    max-width: 800px;
+  }
+    /* Other adjustments for tablet landscape can go here */
+}
+
+    @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+      html, body {
+        overflow-y: auto; /* Enable vertical scrolling on mobile */
       }
-      /* You might also adjust other layout elements if needed */
-    }
 
-
-    @media screen and (min-width: 768px) and (max-width: 1024px) {
+  
     /* Adjust the map container height or layout for iPad Pro 11 */
+    #mainContainer {
+        flex-direction: column; /* stack columns on small screens */
+        overflow: visible; /* Allow internal scrolling if needed */
+        }
+  }
+    /* Order: map first, then controls, then extra info */
+      #main1 { order: 1; }
+      #main2 { order: 2; }
+      #main3 { order: 3; }
+
+
+       /* Float none, 100% width each */
+        #main1, #main2, #main3 {
+          width: 100%;
+          height: auto; /* Let it expand */
+          margin: 0; /* Remove margin for flush stacking */
+          position: relative;
+        }
+        /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
+        #viewDiv {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 650px;
+        }
+
+        #viewDiv2 {
+          flex: 1 1 auto; /* Let it fill available space */
+          height: 650px; /* or whatever you like on mobile */
+        }
+
       #viewDiv {
-      height: 75vh; /* Or another value that fits your design */
+      height: 50vh; /* Or another value that fits your design */
     }
+
+     #legendListDiv,
+    #legendListDiv2 {
+      font-size: 1rem;
+      padding: 8px;
+      max-height: 350px;
+    }
+
      .intro-content {
-      max-width: 760px;
+      max-width: 770px;
     }
     .intro-content h1 {
-      font-size: 2.6rem;
+      font-size: 2.3rem;
       margin-top: 0.35rem;
       margin-bottom: 0.55rem;
     }
+
+     .intro-content p {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1.4rem;
+      }
+
      #header h1 {
-      font-size: 32px;   /* ~1.875rem on small-to-medium screens */
+      max-width: 770px;  /* A smaller max-width to suit tablet screens */
+      margin: 0 auto; 
+      font-size: 33px;   /* ~1.875rem on small-to-medium screens */
       margin-top: 0.3rem;
       margin-bottom: 0.3rem;
       }
     .notes-container p{
-      font-size: 0.8rem; /* ~14px for improved legibility */
+     max-width: 770px;  /* A smaller max-width to suit tablet screens */
+    margin: 0 auto; 
+      font-size: 0.9rem; /* ~14px for improved legibility */
       line-height: 1.4;    /* More breathing room between lines */
       margin-bottom: 0.3rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
       margin-bottom: 0rem;
@@ -578,13 +646,17 @@
 
        /* Other mobile adjustments */
         #header h1 {
+           max-width: 90%;  /* Use a percentage for a fluid layout */
+    margin: 0 auto;
           font-size: 29px;   /* ~1.875rem on small-to-medium screens */
           margin-top: 0.3rem;
           margin-bottom: 0.3rem;
 
         }
         .notes-container p{
-          font-size: 0.8rem; /* ~14px for improved legibility */
+           max-width: 90%;  /* Use a percentage for a fluid layout */
+    margin: 0 auto;
+          font-size: 0.9rem; /* ~14px for improved legibility */
           line-height: 1.4;    /* More breathing room between lines */
           margin-bottom: 0.7rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
           margin-bottom: 0rem;
@@ -600,7 +672,7 @@
           margin-bottom: 1.4rem;
         }
         .intro-content h1 {
-          font-size: 2.3rem;
+          font-size: 2.1rem;
           margin-top: 0.35rem;
           margin-bottom: 0.55rem;
         }
@@ -650,7 +722,7 @@
     }
 
     #intro .intro-content h1 {
-      font-size: 1.9rem;
+      font-size: 1.8rem;
       line-height: 1.4;
       margin-top: -1.6rem; 
     }
@@ -662,11 +734,15 @@
 
     }
     #header h1 {
+         max-width: 95%;  /* Slightly wider for very small screens */
+    margin: 0 auto;
       font-size: 27px; /* or your desired size */
       margin-top: 0.3rem;
       margin-bottom: 0.3rem;
     }
     .notes-container p {
+        max-width: 95%;  /* Slightly wider for very small screens */
+    margin: 0 auto;
       font-size: 0.9rem;
       line-height: 1.4;
     }
@@ -907,7 +983,7 @@
                   }
                 ]
               };
-              popupContent = "Region: {Region}<br>Accident Cases: {ToA23}<br>Accident by Type:<br>{AcURL23}";
+              popupContent = "Region: {Region}<br>Accident Cases: {ToA23}<br>Accident Breakdown:<br><br>{AcURL23}";
 
               break;
 
@@ -2535,7 +2611,7 @@ function setActiveButton(btnElement) {
     <div id="header">
       <h1>Analyzing Road Security on Ghana's Highways</h1>
        <div class="notes-container">
-        <p> The regions on this map may differ from Ghana’s official boundaries, as they are defined by the Ghana Police Service<br> for regional command. Use the plus and minus buttons to zoom, and the opacity slider to adjust road intensity.
+        <p> The regions on this map may differ from Ghana’s official boundaries, as they are defined by the Ghana Police Service for regional command. Use the plus and minus buttons to zoom, and the opacity slider to adjust road intensity.
         </p>
       </div>
     </div>
