@@ -76,7 +76,7 @@
       /* Centered content within the splash overlay */
       .intro-content {
         position: relative;
-        max-width: 800px;
+        max-width: 850px;
         margin: 0 auto;
         padding: 10px;
         z-index: 10;
@@ -519,7 +519,7 @@
         margin-top: 5px; /* Ensure this value is appropriate for large screens */
       }
     }
-   @media screen and (min-width: 1025px) and (max-width: 1366px) and (orientation: landscape) {
+   @media screen and (min-width: 1025px) and (max-width: 1200px) and (orientation: landscape) {
      /* Use a row (desktop) layout */
     #mainContainer {
     flex-direction: row;
@@ -533,7 +533,7 @@
   
     /* You can keep your intro content and header sizes similar to default desktop */
     .intro-content {
-    max-width: 800px;
+    max-width: 850px;
      margin: 0 auto;
   }
   #header h1 {
@@ -545,24 +545,24 @@
     /* Other adjustments for tablet landscape can go here */
 }
 
-    @media screen and (min-width: 768px) and (max-width: 1194px) and (orientation: portrait) {
+    @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
       html, body {
         overflow-y: auto; /* Enable vertical scrolling on mobile */
       }
-#mainMapContainer,
-  #mainContainer {
-    height:auto;
-  }
+    #mainMapContainer,
+    #mainContainer {
+      height:auto;
+    }
   
     /* Adjust the map container height or layout for iPad Pro 11 */
     #mainContainer {
         flex-direction: column; /* stack columns on small screens */
         overflow: visible; /* Allow internal scrolling if needed */
         }
- /* Order the sections for stacking: map first, then controls, then extra info */
-  #main1 { order: 1; }  /* let the map section expand */
-  #main2 { order: 2; }
-  #main3 { order: 3; }
+    /* Order the sections for stacking: map first, then controls, then extra info */
+      #main1 { order: 1; }  /* let the map section expand */
+      #main2 { order: 2; }
+      #main3 { order: 3; }
 
        /* Float none, 100% width each */
         #main1, #main2, #main3 {
@@ -574,12 +574,12 @@
         /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
         #viewDiv {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 650px;
+          height: 600px;
         }
 
         #viewDiv2 {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 650px; /* or whatever you like on mobile */
+          height: 600px; /* or whatever you like on mobile */
         }
 
      #legendListDiv,
@@ -605,15 +605,15 @@
       }
 
      #header h1 {
-      max-width: 770px;  /* A smaller max-width to suit tablet screens */
+      max-width: 700px;  /* A smaller max-width to suit tablet screens */
       margin: 0 auto; 
       font-size: 33px;   /* ~1.875rem on small-to-medium screens */
       margin-top: 0.3rem;
       margin-bottom: 0.3rem;
       }
     .notes-container p{
-     max-width: 770px;  /* A smaller max-width to suit tablet screens */
-    margin: 0 auto; 
+      max-width: 650px;  /* A smaller max-width to suit tablet screens */
+      margin: 0 auto; 
       font-size: 0.9rem; /* ~14px for improved legibility */
       line-height: 1.4;    /* More breathing room between lines */
       margin-bottom: 0.3rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
@@ -636,6 +636,11 @@
 
       /* Responsive adjustments */
       @media screen and (max-width: 800px) {
+
+       /* Allow body to scroll */
+      html, body {
+        overflow-y: auto; /* Enable vertical scrolling on mobile */
+      }
       /* Make the header text smaller on smaller screens */
       .intro-content {
         max-width: 88%; 
@@ -652,24 +657,27 @@
 
        /* Other mobile adjustments */
         #header h1 {
-           max-width: 90%;  /* Use a percentage for a fluid layout */
-    margin: 0 auto;
+          max-width: 90%;  /* Use a percentage for a fluid layout */
+          margin: 0 auto;
           font-size: 29px;   /* ~1.875rem on small-to-medium screens */
           margin-top: 0.3rem;
           margin-bottom: 0.3rem;
 
         }
         .notes-container p{
-           max-width: 90%;  /* Use a percentage for a fluid layout */
-    margin: 0 auto;
+          max-width: 90%;  /* Use a percentage for a fluid layout */
+          margin: 0 auto;
           font-size: 0.9rem; /* ~14px for improved legibility */
           line-height: 1.4;    /* More breathing room between lines */
           margin-bottom: 0.7rem; /* Adjust as needed for spacing */   /* 13px ≈ 0.8125rem for medium screens */
           margin-bottom: 0rem;
         }
          #intro {
+          height: auto; 
+          min-height: 100vh; 
           padding-left: 5px;
           padding:  0px;
+          overflow-y: auto;      /* Allow vertical scrolling inside the splash */
         }
 
         .intro-content p {
@@ -683,11 +691,6 @@
           margin-bottom: 0.55rem;
         }
 
-      /* Allow body to scroll */
-      html, body {
-        overflow-y: auto; /* Enable vertical scrolling on mobile */
-      }
-
       /* Float none, 100% width each */
         #main1, #main2, #main3 {
           width: 100%;
@@ -698,12 +701,12 @@
         /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
         #viewDiv {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 500px;
+          height: 450px;
         }
 
         #viewDiv2 {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 500px; /* or whatever you like on mobile */
+          height: 450px; /* or whatever you like on mobile */
         }
 
         #legendListDiv {
@@ -718,36 +721,46 @@
 
     @media screen and (min-width: 360px) and (max-width: 600px) {
    /* Your mobile styles here */
-    .intro-content {
-      max-width: 90%;
-    }
+     /* Allow body to scroll */
+      html, body {
+        overflow-y: auto; /* Enable vertical scrolling on mobile */
+      }
+    
     #intro {
+      height: auto; 
+      min-height: 100vh; 
       padding-left: 4px;
       padding: 0px;
+      overflow-y: auto;      /* Allow vertical scrolling inside the splash */
     }
 
+    .intro-content {
+      max-width: 90%;
+      margin: 0 auto;
+    }
+    
     #intro .intro-content h1 {
       font-size: 1.8rem;
-      line-height: 1.4;
-      margin-top: -1.6rem; 
+      line-height: 1.35;
+      margin-top: -1.4rem; 
     }
     #intro .intro-content p  {
-      font-size: 0.9rem;
-      line-height: 1.5;
+      font-size: 0.87rem;
+      line-height: 1.47;
       margin-bottom: 0.8rem;
-      margin-top: -0.1rem; 
+      margin-top: -0.2rem; 
 
     }
     #header h1 {
-         max-width: 95%;  /* Slightly wider for very small screens */
-    margin: 0 auto;
+      max-width: 95%;  /* Slightly wider for very small screens */
+      margin: 0 auto;
       font-size: 27px; /* or your desired size */
       margin-top: 0.3rem;
       margin-bottom: 0.3rem;
     }
     .notes-container p {
-        max-width: 95%;  /* Slightly wider for very small screens */
-    margin: 0 auto;
+      max-width: 95%;  /* Slightly wider for very small screens */
+      margin: 0 auto;
       font-size: 0.9rem;
       line-height: 1.4;
     }
@@ -755,12 +768,12 @@
      /* Optionally reduce the map’s height so it’s not too tall on mobile */ /* Adjust map height for smaller screens */
         #viewDiv {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 400px;
+          height: 350px;
         }
 
         #viewDiv2 {
           flex: 1 1 auto; /* Let it fill available space */
-          height: 400px; /* or whatever you like on mobile */
+          height: 350px; /* or whatever you like on mobile */
         }
     .intro-content .byline {
       font-size: 0.8rem;
@@ -777,7 +790,7 @@
     #legendListDiv2 {
       font-size: 1rem;
       padding: 8px;
-      max-height: 350px;
+      max-height: 300px;
     }
   }
 
@@ -1012,7 +1025,7 @@
         type: "simple",
         symbol: {
           type: "simple-marker",
-          color: [142, 68, 173, 0.9],
+          color: [52, 152, 219, 0.9],
           outline: { width: 0.6, color: "white" }
         },
         visualVariables: [
@@ -1038,7 +1051,7 @@
         type: "simple",
         symbol: {
           type: "simple-marker",
-          color: [176, 48, 96, 0.9],
+          color: [142, 68, 173, 0.9],
           outline: { width: 0.6, color: "white" },
         },
         visualVariables: [
@@ -2613,7 +2626,7 @@ function setActiveButton(btnElement) {
          <!-- Byline added below the paragraph -->
         <p class="byline">By Kwamina Kurefi Edonu</p>
         <p>
-          Road traffic accidents remain a grave and persistent threat to the well-being and economic progress of millions of Ghanaians, posing a significant barrier to the country’s development. In 2021, Ghana recorded 16,182 accidents, resulting in 2,970 fatalities and 15,935 injuries, according to the Motor Traffic and Transport Department (MTTD) of the Ghana Police Service. Use this interactive tool to explore Ghana’s road accident data. The first map visualizes accident incidents from 2014 to 2023, while, the second map highlights population data. 
+          Road traffic accidents continue to pose a severe threat to the well-being and economic advancement of millions of Ghanaians, creating a significant hurdle to the nation’s development. In 2021 alone, the Motor Traffic and Transport Department (MTTD) of the Ghana Police Service recorded 16,182 accidents, resulting in 2,970 fatalities and 15,935 injuries. Use this interactive tool to explore Ghana’s road accident data. The first map visualizes accident incidents from 2014 to 2023, while, the second map highlights population data. 
         </p>
         <!-- Clicking this link scrolls to the main map container -->
         <a href="#mainMapContainer" class="start-journey-btn">Explore Map</a>
